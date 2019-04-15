@@ -1,10 +1,11 @@
 # coding :utf-8
-from flask import current_app, request, url_for
+from flask import current_app, request, url_for, jsonify
 from flask_login import UserMixin, AnonymousUserMixin, current_user
 from . import db, login_manager
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from functools import wraps
+import json
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -33,20 +34,20 @@ class User(db.Model):
         
     def token_check(role_needed):    
         def confirm(f):
-            @wraps(f):
+            @wraps(f)
             def decorated_func(*args, **kwargs):
                 if request.headers['token'] is None:
-                    return jsonify({}), 401
+                    return jsonify({"msg":"you should siginin first!"}), 401
                 s = Serializer(current_app.config['SECRET_KEY'])
                 try:
-                    data = s.loads(token.encode('utf-8'))
+                    data = s.loads(request.headers['token'].encode('utf-8'))
                 except:
-                    return jsonify({}), 401
+                    return jsonify({"msg":"wrong token"}), 401
                 user_id = data.get('confirm')
-                role = User.query.filter_by(id=uesr_id).first().role
+                role = User.query.filter_by(id=user_id).first().role
                 if role_needed > role:
                     return jsonify({"msg":"you can't do this"}),401
-                rv = f(*args, **kwargs)
+                rv = f(user_id, *args, **kwargs)
                 return rv
             return decorated_func
         return confirm

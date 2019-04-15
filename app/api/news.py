@@ -13,17 +13,17 @@ def news_list(page):
     dataList = []
     news_num = 0
     page_news_limit = 8
-    if all_news is None:
+    if not all_news:
         return jsonify({"msg":"no news now"}), 403
     for news in all_news[::-1]:
         news_num += 1
         if news_num > (page-1)*page_news_limit and news_num <= page*page_news_limit:
             newsList = {} 
-            newsList[newsid] = news.id
-            newsList[title] = news.title
-            newsList[content] = (news.content)[:51]
-            newsList[photo] = news.photo
-            newsList[commentsnum] = Comments.query.filter_by(news_id=news.id).count()
+            newsList['news_id'] = news.id
+            newsList['title'] = news.title
+            newsList['content'] = (news.content)[:51]
+            newsList['photo'] = news.photo
+            newsList['commentsnum'] = Comments.query.filter_by(news_id=news.id).count()
             dataList.append(newsList)
         elif news_num > page*page_news_limit:
             break
@@ -31,9 +31,9 @@ def news_list(page):
 
 
 @api.route('/news/<int:news_id>/', methods = ['GET'])
-def news_information(newsid):
+def news_information(news_id):
     if request.method == 'GET':
-        news = News.query.filter_by(id=news_id)
+        news = News.query.filter_by(id=news_id).first()
         if news is  None:
             return jsonify({"msg":"news is not exist"}),403
         title = news.title
@@ -43,9 +43,9 @@ def news_information(newsid):
         comments = Comments.query.filter_by(news_id=news_id).all()
         for comment in comments:
             data = {}
-            data[comment_id] = comment.id
-            data[username] = User.query.filter_by(id=comment.user_id).first().username
-            data[content] = comment.content
+            data['comment_id'] = comment.id
+            data['username'] = User.query.filter_by(id=comment.user_id).first().username
+            data['content'] = comment.content
             comments_list.append(data)
         return jsonify({"title":title,
                         "content":content,
@@ -59,9 +59,9 @@ def write_news(user_id):
     if request.method == 'POST':
         title = request.get_json().get('title')
         content = request.get_json().get('content')
-        photo = request.get_json.get('photo')
+        photo = request.get_json().get('photo')
         news = News(title = title,
-                    contnet = content,
+                    content = content,
                     photo = photo,)
         db.session.add(news)
         db.session.commit()
@@ -85,8 +85,8 @@ def delete_news(user_id):
 @User.token_check(0)
 def write_comment(user_id, news_id):
     if request.method == 'POST':
-        content = request.get_json.get('content')
-        comment = Comments(content = cotent, 
+        content = request.get_json().get('content')
+        comment = Comments(content = content, 
                            user_id = user_id,
                            news_id = news_id,)
         db.session.add(comment)
@@ -94,8 +94,8 @@ def write_comment(user_id, news_id):
         return jsonify({"msg":"cooment add successful!"}),200
 
 
-@api.route('/comment/<int:comment_id>', method = ['DELETE'])
-@Use.token_check(0)
+@api.route('/comment/<int:comment_id>', methods = ['DELETE'])
+@User.token_check(0)
 def delete_comment(user_id, comment_id):
     if request.meothod == 'DELETE':
         comment = Comment.query.filter_by(id=comment_id).first()
