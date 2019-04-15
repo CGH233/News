@@ -58,20 +58,20 @@ class News(db.Model):
     title = db.Column(db.String(50), unique=True, index=True)
     content = db.Column(db.Text)
     photo = db.Column(db.String(50)) #新闻图片的url
-    comments = db.relationship('Comments', backref='news', lazy='dynamic')
+    comments = db.relationship('Comments', backref='news', passive_deletes=True, cascade='delete', lazy='dynamic')
 
 class Comments(db.Model):
     __tablename__ = 'commments'
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text)
-    news_id = db.Column(db.Integer, db.ForeignKey('news.id'), unique=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), unique=True)
+    news_id = db.Column(db.Integer, db.ForeignKey(('news.id'), ondelete='cascade'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
 class Feed(db.Model):
     __tablename__ = 'feed'
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String(120))
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), unique=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     
 
 @login_manager.user_loader

@@ -70,7 +70,7 @@ def write_news(user_id):
 
 @api.route('/news/<int:news_id>/', methods = ['DELETE'])
 @User.token_check(1)
-def delete_news(user_id):
+def delete_news(user_id, news_id):
     if request.method == 'DELETE':
         news = News.query.filter_by(id=news_id).first()
         if news:
@@ -85,22 +85,25 @@ def delete_news(user_id):
 @User.token_check(0)
 def write_comment(user_id, news_id):
     if request.method == 'POST':
-        content = request.get_json().get('content')
-        comment = Comments(content = content, 
-                           user_id = user_id,
-                           news_id = news_id,)
-        db.session.add(comment)
-        db.session.commit()
-        return jsonify({"msg":"cooment add successful!"}),200
+        if News.query.filter_by(id=news_id).first():
+            content = request.get_json().get('content')
+            comment = Comments(content = content, 
+                               user_id = user_id,
+                               news_id = news_id,)
+            db.session.add(comment)
+            db.session.commit()
+            return jsonify({"msg":"cooment add successful!"}),200
+        else:
+            return jsonify({"msg":"news is not exist!"}),403
 
 
-@api.route('/comment/<int:comment_id>', methods = ['DELETE'])
+@api.route('/comment/<int:comment_id>/', methods = ['DELETE'])
 @User.token_check(0)
 def delete_comment(user_id, comment_id):
-    if request.meothod == 'DELETE':
-        comment = Comment.query.filter_by(id=comment_id).first()
+    if request.method == 'DELETE':
+        comment = Comments.query.filter_by(id=comment_id).first()
         if user_id == comment.user_id:
-            Comment.query.filter_by(id=comment_id).delete()
+            Comments.query.filter_by(id=comment_id).delete()
             return jsonify({"msg":"comment has been delete!"}),200
         else:
             return jsonify({"msg":"you are not allowed to  do that!"}),403
