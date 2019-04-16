@@ -102,11 +102,13 @@ def write_comment(user_id, news_id):
 def delete_comment(user_id, comment_id):
     if request.method == 'DELETE':
         comment = Comments.query.filter_by(id=comment_id).first()
-        if user_id == comment.user_id:
-            Comments.query.filter_by(id=comment_id).delete()
-            return jsonify({"msg":"comment has been delete!"}),200
+        if comment:
+            if user_id == comment.user_id:
+                Comments.query.filter_by(id=comment_id).delete()
+                return jsonify({"msg":"comment has been delete!"}),200
+            else:
+                return jsonify({"msg":"you are not allowed to  do that!"}),403
         else:
-            return jsonify({"msg":"you are not allowed to  do that!"}),403
-
+            return jsonify({"msg":"comment is not exist"}),403
 
         
