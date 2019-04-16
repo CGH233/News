@@ -19,10 +19,10 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = "mysql+pymysql://root:cgh1998922@localhost/news?charset=utf8"
+    SQLALCHEMY_DATABASE_URI = "mysql+pymysql://root:{}@127.0.0.1/news?charset=utf8".format(password)
 
 class ProductionConfig(Config):
-    SQLALCHEMY_DATABASE_URI = "mysql+pymysql://root:cgh1998922@127.0.0.1/news?charset=utf8"
+    SQLALCHEMY_DATABASE_URI = "mysql+pymysql://root:{}@127.0.0.1/news?charset=utf8".format(password)
     @classmethod
     def init_app(cls, app):
         Config.init_app(app)
