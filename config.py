@@ -1,7 +1,7 @@
 #coding:utf-8
 import os
 basedir = os.path.abspath(os.path.dirname(__file__))
-password = os.get(newspassword)
+password = os.getenv("newspassword")
 
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY") or "hard to guess string"
@@ -15,7 +15,7 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = "mysql+pymysql://root:{}@127.0.0.1/news?charset=utf8".format(newspassword)
+    SQLALCHEMY_DATABASE_URI = "mysql+pymysql://root:{}@127.0.0.1/news?charset=utf8".format(password)
 
 class TestingConfig(Config):
     TESTING = True
