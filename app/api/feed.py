@@ -23,9 +23,12 @@ def new_feed(user_id):
 def delete_feed(user_id, feed_id):
     if request.method == 'DELETE':
         feed = Feed.query.filter_by(id=feed_id).first()
-        if feed and feed.user_id == user_id:
-            Feed.query.filter_by(id=feed_id).delete()
-            return jsonify({"msg":"feed has been delete!"}),200
+        if feed:
+            if feed.user_id == user_id:
+                Feed.query.filter_by(id=feed_id).delete()
+                return jsonify({"msg":"feed has been delete!"}),200
+            else:
+                return jsonify({"msg":"wrong user!"}),403
         else:
             return jsonify({"msg":"feed is not exist"}),403
 
