@@ -1,0 +1,390 @@
+  swagger: '2.0'
+  
+  ### information start ###
+  info:
+    description: News API 
+    version: 1.0.0
+    title: News API
+    #license
+  ### information end ###
+  
+  host: 120.78.194.125
+  basePath: /api/v1.0/
+  schemes:
+    - https
+    - http
+  
+  ### tag start ###
+  
+  tags:
+    - name: auth
+      description: 身份验证服务
+  
+    - name: news
+      description: 新闻管理服务
+  
+    - name: feed
+      description: feed流服务
+  
+  ### tag end ###
+  
+  ### auth start ###
+  
+  securityDefinitions:
+  
+    token:
+      type: apiKey
+      description: token,然后在请求头中添加Authorization字段，内容为base64.encode(“token:”)
+      name: token
+      in: header
+  
+  ### auth end ###
+  
+  ### path start ###
+  
+  paths:
+    /signup/:
+      post:
+        tags:
+          - auth
+        summary: Signup a account.
+        description: Just save a list of user.
+        consumes:
+          - application/json
+        produces:
+          - application/json
+        parameters:
+          - name: POSTdata
+            in: body
+            description: data to fill the segments
+            schema:
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+        responses:
+          200:
+            description: Signup successfully
+          401:
+            description: User already exist
+    /signin/:
+      post:
+        tags:
+          - auth
+        summary: Login a account
+        description: Get a token formed by user-info
+        consumes:
+          - application/json
+        produces:
+          - application/json
+        parameters:
+          - name: POSTdata
+            in: body
+            description: data to mark who want a token
+            schema:
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+        responses:
+          200:
+            description: Return a token
+            schema:
+              required:
+                - token
+                - uid
+              properties:
+                token:
+                  type: string
+                uid:
+                  type: integer
+                  
+    /news/list/{page}/:
+      get:
+        tags:
+          - news
+        summary: get a page of news (10)
+        description: get a list of news.
+        consumes:
+          - application/json
+        produces:
+          - application/json
+        parameters:
+          - in: path
+            name: page
+            description: the page of news
+            required: true
+            type: integer 
+        responses:
+          200:
+            description: news list
+            schema:
+              required:
+                - newslist
+              properties:
+                newslist:
+                  type: array
+                  items:
+                    required:
+                      - news_id
+                      - title
+                      - content
+                      - photo
+                      - commentsnum
+                    properties:
+                      news_id:
+                        type: integer
+                      title:
+                        type: string
+                      content:
+                        type: string
+                      photo:
+                        type: string
+                      commentsnum:
+                        type: integer
+          403:
+            description: no news now
+    
+    /news/{news_id}/:
+      get:
+        tags:
+          - news
+        summary: get a piece of news
+        description: get a piece of news.
+        consumes:
+          - application/json
+        produces:
+          - application/json
+        parameters:
+          - in: path
+            name: news_id
+            description: the page of news
+            required: true
+            type: integer 
+        responses:
+          200:
+            description: news information
+            schema:
+              required:
+                - titlte
+                - content
+                - photo
+                - comments_list
+              properties:
+                title:
+                  type: string
+                content:
+                  type: string
+                photo:
+                  type: string
+                comments_list:
+                  type: array
+                  items:
+                    required:
+                      - comment_id
+                      - username
+                      - content
+                    properties:
+                      comment_id:
+                        type: integer
+                      content:
+                        type: string
+                      photo:
+                        type: string
+          403:
+            description: news in not exist
+      delete:
+        tags: 
+          - news
+        summary: delete a news
+        description: role 1 can do this
+        consumes: 
+          - application/json
+        produces:
+          - application/json
+        parameters: 
+          - in: path
+            name: news_id
+            required: true
+            type: integer
+        responses:
+          200:
+            description: OK
+          403: 
+            description: no token or role
+        security:
+          - token: [] 
+    /news/:
+      post:
+        tags: 
+          - news
+        summary: add a piece of news
+        description: role 1 can do this
+        consumes:
+          - application/json
+        produces:
+          - application/json
+        parameters: 
+          - name: POSTdata
+            in: body
+            description: data to add title, content, photo
+            schema:
+              required:
+                - title
+                - content
+                - photo
+              properties:
+                title:
+                  type: string
+                content:
+                  type: string
+                photo:
+                  type: string
+        responses:
+          200:
+            description: add news successful
+          403:
+            description: no token or role
+        security:
+          - token: [] 
+            
+    /news/{news_id}/commnet/:
+      post:
+        tags:
+          - news
+        summary: comment news 
+        description: add a comment to news
+        consumes: 
+          - application/json
+        produces:
+          - application/json
+        parameters: 
+          - name: news_id
+            in: path
+            required: true
+            type: integer
+          - name: POSTdata
+            in: body
+            description: data to add content
+            schema:
+              required:
+                - content
+              properties:
+                content:
+                  type: string
+        responses:
+          200:
+            description: comment add successful!
+          403:
+            description: news is not exist/no token
+        security:
+        - token: []
+        
+    /comment/{comment_id}/:
+      delete:
+        tags: 
+          - news
+        summary: delete a comment
+        description: delete a comment by comment_id and token
+        parameters: 
+          - name: comment_id
+            in: path
+            required: true
+            type: integer
+        responses:
+          200:
+            description: comment has been delete!
+          403:
+            description: you are not allowed to do that!
+        security:
+        - token: []       
+      
+    /feed/:
+      post:
+        tags: 
+          - feed
+        summary: add a feed 
+        description: add a feed by token
+        consumes: 
+          - application/json
+        produces:
+          - application/json
+        parameters: 
+          - name: postdata
+            in: body
+            description: data to add content
+            schema:
+              required:
+                - content
+              properties:
+                content:
+                  type: string  
+        responses: 
+          200:
+            description: feed add successful!
+          403:
+            description: no token
+        security: 
+          - token: []
+        
+    /feed/{feed_id}/:
+      delete:
+        tags: 
+          - feed
+        summary: delete a feed 
+        description: delete a feed by feed_id and token
+        parameters: 
+          - name: feed_id
+            in: path
+            required: true
+            type: integer
+        responses: 
+          200:
+            description: feed has been delete!
+          403:
+            description: feed is not exist!/no token/wrong user
+    
+    /feed/list/{page}/:
+      get:
+        tags: 
+          - feed
+        summary: get a list of feed 
+        description: get a list of page by page
+        parameters: 
+          - name: page
+            in: path
+            required: true
+            type: integer
+        responses:
+          200:
+            description: a list of feed
+            schema:
+              required: 
+                - content
+                - feed_id
+                - username
+              properties:
+                content:
+                  type: string
+                feed_id:
+                  type: integer
+                username:
+                  type: string
+          
+      
+      
+      
+      
+      
+      
+      
+                  
+   
