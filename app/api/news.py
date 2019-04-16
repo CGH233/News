@@ -12,7 +12,7 @@ def news_list(page):
     all_news = News.query.all()
     dataList = []
     news_num = 0
-    page_news_limit = 8
+    page_news_limit = 10
     if not all_news:
         return jsonify({"msg":"no news now"}), 403
     for news in all_news[::-1]:
