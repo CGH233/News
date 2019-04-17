@@ -103,10 +103,13 @@
             schema:
               required:
                 - token
+                - username
               properties:
                 token:
                   type: string
-            
+                username:
+                  type: string
+
                   
     /news/list/{page}/:
       get:
