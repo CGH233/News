@@ -93,9 +93,9 @@ def write_comment(user_id, news_id):
     if request.method == 'POST':
         if News.query.filter_by(id=news_id).first():
             content = request.get_json().get('content')
-            time =  time.strftime("%Y-%m-%d %a %H:%M", time.localtime())
+            localtime =  time.strftime("%Y-%m-%d %a %H:%M", time.localtime())
             comment = Comments(content = content,
-                               time = time,
+                               time = localtime,
                                user_id = user_id,
                                news_id = news_id,)
             db.session.add(comment)
