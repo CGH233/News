@@ -16,7 +16,7 @@ class User(db.Model):
     role = db.Column(db.Integer)
     comments = db.relationship('Comments', backref='users', lazy='dynamic')
     feed = db.relationship('Feed', backref='users', lazy='dynamic')
-    confirmed = db.Column(db.Boolean, defaulti=False)
+    confirmed = db.Column(db.Boolean, default=False)
     
     @property
     def password(self):

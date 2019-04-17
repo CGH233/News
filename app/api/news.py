@@ -53,7 +53,7 @@ def news_information(news_id):
         return jsonify({"title":title,
                         "content":content,
                         "photo":photo,
-                        "time":time
+                        "time":time,
                         "comments_list":comments_list,}),200
 
 
