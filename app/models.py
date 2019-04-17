@@ -10,12 +10,13 @@ import json
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
+    account = db.Column(db.String(64), unique=True, index=True)
     username = db.Column(db.String(64), unique=True, index=True)
     password_hash = db.Column(db.String(128))
     role = db.Column(db.Integer)
     comments = db.relationship('Comments', backref='users', lazy='dynamic')
     feed = db.relationship('Feed', backref='users', lazy='dynamic')
-    confirmed = db.Column(db.Boolean, default=False)
+    confirmed = db.Column(db.Boolean, defaulti=False)
     
     @property
     def password(self):
@@ -57,20 +58,23 @@ class News(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(50), unique=True, index=True)
     content = db.Column(db.Text)
-    photo = db.Column(db.String(50)) #新闻图片的url
+    photo = db.Column(db.String(50))
+    time = db. Column(db.String(30))
     comments = db.relationship('Comments', backref='news', passive_deletes=True, cascade='delete', lazy='dynamic')
 
 class Comments(db.Model):
     __tablename__ = 'commments'
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text)
+    time = db.Column(db.String(64))
     news_id = db.Column(db.Integer, db.ForeignKey(('news.id'), ondelete='cascade'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
 class Feed(db.Model):
     __tablename__ = 'feed'
     id = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.String(120))
+    content = db.Column(db.Text)
+    time = db.Column(db.String(30))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     
 

@@ -9,10 +9,12 @@ import json
 @api.route('/signup/', methods = ['POST'])
 def signup():
     if request.method == 'POST':
+        account = request.get_json().get("account")
         username = request.get_json().get('username')
         password = request.get_json().get('password')
-        if not User.query.filter_by(username = username).first():
-            user = User(username = username,
+        if not User.query.filter_by(account=account).first():
+            user = User(account = account,
+                        username = username,
                         password = password,
                         role = 0)
             db.session.add(user)

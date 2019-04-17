@@ -9,18 +9,16 @@ import json
 @api.route('/signin/', methods = ['POST'])
 def signin():
     if request.method == 'POST':
-        username = request.get_json().get("username")
+        account = request.get_json().get("account")
         password = request.get_json().get("password")
         try:
-            user = User.query.filter_by(username = username).first()
+            user = User.query.filter_by(account=account).first()
         except:
             user = None
-            return jsonify({"msg":"wrong username"}),400
+            return jsonify({"msg":"wrong account"}),400
         if user is not None and user.verify_password(password):
-            uid = user.id
             token = user.generate_confirmation_token()
             return jsonify({
-                "uid":user.id,
                 "token":token,
             }),200
         else:

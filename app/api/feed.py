@@ -1,5 +1,6 @@
 #coding:utf-8
 import json
+import time
 from . import api
 from app import db
 from app.models import Feed, User
@@ -10,8 +11,10 @@ from flask import jsonify, request, Response
 def new_feed(user_id):
     if request.method == 'POST':
         content = request.get_json().get('content')
+        time = time.strftime("%Y-%m-%d %a %H:%M", time.localtime())
         feed = Feed(content = content,
-                    user_id = user_id,)
+                    time = time, 
+                    user_id = user_id)
         db.session.add(feed)
         db.session.commit()
         return jsonify({"msg":"feed add successful!"}),200
@@ -47,6 +50,7 @@ def feed_list(page):
                 a_feed['content'] = feed.content
                 a_feed['feed_id'] = feed.id
                 a_feed['username'] = User.query.filter_by(id=feed.user_id).first().username
+                a_feed['time'] = feed.time
                 feedList.append(a_feed)
             elif feed_num > page*page_feed_limit:
                 break

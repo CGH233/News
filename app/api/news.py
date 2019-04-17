@@ -1,11 +1,11 @@
 #coding:utf-8
 
 import json
+import time
 from . import api
 from app import db
 from app.models import User, News, Comments
 from flask import jsonify, request, Response
-
 
 @api.route('/news/list/<int:page>/', methods = ['GET'])
 def news_list(page):
@@ -23,6 +23,7 @@ def news_list(page):
             newsList['title'] = news.title
             newsList['content'] = (news.content)[:51]
             newsList['photo'] = news.photo
+            newsList['time'] = news.time
             newsList['commentsnum'] = Comments.query.filter_by(news_id=news.id).count()
             dataList.append(newsList)
         elif news_num > page*page_news_limit:
@@ -39,17 +40,20 @@ def news_information(news_id):
         title = news.title
         content = news.content
         photo = news.photo
+        time = news.time
         comments_list = []
         comments = Comments.query.filter_by(news_id=news_id).all()
         for comment in comments:
             data = {}
             data['comment_id'] = comment.id
             data['username'] = User.query.filter_by(id=comment.user_id).first().username
+            data['time'] = comment.time
             data['content'] = comment.content
             comments_list.append(data)
         return jsonify({"title":title,
                         "content":content,
                         "photo":photo,
+                        "time":time
                         "comments_list":comments_list,}),200
 
 
@@ -60,9 +64,11 @@ def write_news(user_id):
         title = request.get_json().get('title')
         content = request.get_json().get('content')
         photo = request.get_json().get('photo')
+        time =  time.strftime("%Y-%m-%d %a %H:%M", time.localtime())
         news = News(title = title,
                     content = content,
-                    photo = photo,)
+                    photo = photo,
+                    time = time,)
         db.session.add(news)
         db.session.commit()
         return jsonify({"msg":"add news successful!"}),200
@@ -87,7 +93,9 @@ def write_comment(user_id, news_id):
     if request.method == 'POST':
         if News.query.filter_by(id=news_id).first():
             content = request.get_json().get('content')
-            comment = Comments(content = content, 
+            time =  time.strftime("%Y-%m-%d %a %H:%M", time.localtime())
+            comment = Comments(content = content,
+                               time = time,
                                user_id = user_id,
                                news_id = news_id,)
             db.session.add(comment)

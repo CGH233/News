@@ -59,12 +59,15 @@
             description: data to fill the segments
             schema:
               required:
-                - username
+                - account
                 - password
+                - username
               properties:
-                username:
+                account:
                   type: string
                 password:
+                  type: string
+                username:
                   type: string
         responses:
           200:
@@ -87,10 +90,10 @@
             description: data to mark who want a token
             schema:
               required:
-                - username
+                - account
                 - password
               properties:
-                username:
+                account:
                   type: string
                 password:
                   type: string
@@ -100,12 +103,10 @@
             schema:
               required:
                 - token
-                - uid
               properties:
                 token:
                   type: string
-                uid:
-                  type: integer
+            
                   
     /news/list/{page}/:
       get:
@@ -139,6 +140,7 @@
                       - content
                       - photo
                       - commentsnum
+                      - time
                     properties:
                       news_id:
                         type: integer
@@ -150,6 +152,8 @@
                         type: string
                       commentsnum:
                         type: integer
+                      time:
+                        type: string
           403:
             description: no news now
     
@@ -177,6 +181,7 @@
                 - titlte
                 - content
                 - photo
+                - time
                 - comments_list
               properties:
                 title:
@@ -185,6 +190,8 @@
                   type: string
                 photo:
                   type: string
+                time:
+                  type: string
                 comments_list:
                   type: array
                   items:
@@ -192,12 +199,15 @@
                       - comment_id
                       - username
                       - content
+                      - time
                     properties:
                       comment_id:
                         type: integer
                       content:
                         type: string
                       username:
+                        type: string
+                      time:
                         type: string
           403:
             description: news in not exist
@@ -377,6 +387,7 @@
                         - content
                         - feed_id
                         - username
+                        - time
                       properties:
                         content:
                           type: string
@@ -384,7 +395,8 @@
                           type: integer
                         username:
                           type: string
-                  
+                        time:
+                          type: string
       
       
       
