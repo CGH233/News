@@ -43,7 +43,7 @@ def feed_list(page):
         feed_num = 0
         feedList = []
         page_feed_limit = 10
-        for feed in feed_list:
+        for feed in feed_list[::-1]:
             feed_num += 1
             if feed_num > (page-1)*page_feed_limit and feed_num <= page*page_feed_limit:
                 a_feed = {}
