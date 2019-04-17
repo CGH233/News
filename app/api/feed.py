@@ -11,9 +11,9 @@ from flask import jsonify, request, Response
 def new_feed(user_id):
     if request.method == 'POST':
         content = request.get_json().get('content')
-        time = time.strftime("%Y-%m-%d %a %H:%M", time.localtime())
+        localtime = time.strftime("%Y-%m-%d %a %H:%M", time.localtime())
         feed = Feed(content = content,
-                    time = time, 
+                    time = localtime, 
                     user_id = user_id)
         db.session.add(feed)
         db.session.commit()

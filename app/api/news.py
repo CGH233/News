@@ -64,11 +64,11 @@ def write_news(user_id):
         title = request.get_json().get('title')
         content = request.get_json().get('content')
         photo = request.get_json().get('photo')
-        time =  time.strftime("%Y-%m-%d %a %H:%M", time.localtime())
+        localtime =  time.strftime("%Y-%m-%d %a %H:%M", time.localtime())
         news = News(title = title,
                     content = content,
                     photo = photo,
-                    time = time,)
+                    time = localtime,)
         db.session.add(news)
         db.session.commit()
         return jsonify({"msg":"add news successful!"}),200
