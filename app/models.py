@@ -45,7 +45,10 @@ class User(db.Model):
                 except:
                     return jsonify({"msg":"wrong token"}), 401
                 user_id = data.get('confirm')
-                role = User.query.filter_by(id=user_id).first().role
+                user = User.query.filter_by(id=user_id).first()
+                if user is None:
+                    return jsonify({"msg":"no this user"}),403
+                role = user.role
                 if role_needed > role:
                     return jsonify({"msg":"you can't do this"}),401
                 rv = f(user_id, *args, **kwargs)
