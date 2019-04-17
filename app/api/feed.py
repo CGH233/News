@@ -46,7 +46,7 @@ def feed_list(page):
                 a_feed = {}
                 a_feed['content'] = feed.content
                 a_feed['feed_id'] = feed.id
-                a_feed['username'] = feed.user_id
+                a_feed['username'] = User.query.filter_by(id=feed.user_id).first().username
                 feedList.append(a_feed)
             elif feed_num > page*page_feed_limit:
                 break
