@@ -58,7 +58,7 @@ class News(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(50), unique=True, index=True)
     content = db.Column(db.Text)
-    photo = db.Column(db.String(50))
+    photo = db.Column(db.Text)
     time = db. Column(db.String(30))
     comments = db.relationship('Comments', backref='news', passive_deletes=True, cascade='delete', lazy='dynamic')
 
