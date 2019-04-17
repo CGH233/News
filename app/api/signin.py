@@ -17,7 +17,7 @@ def signin():
             user = None
             return jsonify({"msg":"wrong account"}),400
         if user is not None and user.verify_password(password):
-            username = user.name
+            username = user.username
             token = user.generate_confirmation_token()
             return jsonify({
                 "token":token,
